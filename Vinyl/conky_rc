@@ -1,0 +1,72 @@
+# Custom conky, inspired by minconky, helix and flair weather.
+sbackground yes
+use_xft yes
+xftalpha 0.8
+update_interval 1
+total_run_times 0
+own_window yes
+own_window_type dock
+own_window_transparent yes
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+double_buffer yes
+draw_shades no
+draw_outline no
+draw_borders no
+draw_graph_borders no
+stippled_borders 0
+border_width 1
+default_color 000000
+default_shade_color 000000
+default_outline_color 000000
+minimum_size 100 100
+maximum_width 500
+gap_x 95
+gap_y 30
+no_buffers yes
+uppercase no
+cpu_avg_samples 2
+net_avg_samples 2
+short_units yes
+text_buffer_size 2048
+use_spacer none
+override_utf8_locale yes
+
+
+# Text settings #
+use_xft yes
+xftalpha 0
+xftfont TheNautiGal:bold:size=10
+override_utf8_locale yes
+
+# Color scheme #
+default_color white
+color1 212021
+color2 efefef#eee
+color3 1a1a1a
+color4 dfdfdf
+color5 555
+
+own_window_argb_value 0
+own_window_argb_visual yes
+own_window_colour 000000
+alignment top_left
+TEXT
+# --- Time and date --- #
+#########################
+\
+${offset 30}${color2}${font Work Sans Hairline:size=90}${time %I:%M}${font Work Sans Hairline:size=20:bold}${time %p}
+${color4}${font Work Sans Hairline:size=20:bold}_______________________
+${offset 65}${voffset 15}${color3}${font Work Sans ExtraLight:size=25}${time %A, %d %b}
+
+# --- Weather --- #
+## Delhi Yahoo Weather code: 28743736 ##
+## Delhi OpenWeatherMap ID: 1273294 ##
+## Check for weather update every 15 minutes (900s) ##
+# --- WOEID (Location id) --- #
+${execi 900 curl -s "https://query.yahooapis.com/v1/public/yql?q=select%20item.condition%20from%20weather.forecast%20where%20woeid%20%3D%2028743736%20and%20u%3D%27c%27&format=xml&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys" -o ~/.cache/weather.xml}\
+# --- Temperature --- #
+#######################
+${offset 155}${voffset -40}${color5}${font Work Sans Hairline:size=20:bold}${execi 900 grep "yweather:condition" ~/.cache/weather.xml | grep -o "temp=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*"}°C
+# --- Weather icon --- #
+########################
+${execi 900 cp -f ~/.conky/weather_icons/$(grep "yweather:condition" ~/.cache/weather.xml | grep -o "code=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*").png ~/.cache/weather-1.png}${image ~/.cache/weather-1.png -p 95,208 -s 40x40}
