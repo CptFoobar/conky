@@ -40,11 +40,10 @@ override_utf8_locale yes
 
 # Color scheme #
 default_color white
-color1 212021
 color2 f1f1f1#efefef
-color3 1a1a1a
-color4 dfdfdf
-color5 555
+color4 34ff41
+color6 ffff8a
+color8 d20f0f
 
 own_window_argb_value 0
 own_window_argb_visual yes
@@ -54,7 +53,7 @@ TEXT
 # --- Time and date --- #
 #########################
 \
-${offset 30}${color2}${font Work Sans Hairline:size=90}${time %I:%M}${font Work Sans Hairline:size=20:bold}${time %p}
+${offset 40}${color2}${font Work Sans Hairline:size=90}${time %I:%M}${font Work Sans Hairline:size=20:bold}${time %p}
 ${color2}${font Work Sans Hairline:size=20:bold}___________________________
 ${offset 65}${voffset 15}${color2}${font Work Sans ExtraLight:size=25}${time %A, %d %b}
 
@@ -64,9 +63,17 @@ ${offset 65}${voffset 15}${color2}${font Work Sans ExtraLight:size=25}${time %A,
 ## Check for weather update every 15 minutes (900s) ##
 # --- WOEID (Location id) --- #
 ${execi 900 curl -s "https://query.yahooapis.com/v1/public/yql?q=select%20item.condition%20from%20weather.forecast%20where%20woeid%20%3D%2028743736%20and%20u%3D%27c%27&format=xml&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys" -o ~/.cache/weather.xml}\
+\
 # --- Temperature --- #
 #######################
 ${offset 155}${voffset -40}${color2}${font Work Sans Hairline:size=20:bold}${execi 900 grep "yweather:condition" ~/.cache/weather.xml | grep -o "temp=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*"}°C
+\
 # --- Weather icon --- #
 ########################
 ${execi 900 cp -f ~/.conky/weather_icons/$(grep "yweather:condition" ~/.cache/weather.xml | grep -o "code=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*").png ~/.cache/weather-1.png}${image ~/.cache/weather-1.png -p 95,208 -s 40x40}
+\
+# --- Free Space --- #
+#######################
+${offset 120}${voffset 300}${font :size=12}${color4} HD ${offset 20}${if_match $fs_free_perc <= 10}${color8}${else}${color6}${endif} ${fs_free /} / ${fs_size /}
+${offset 120}${voffset 5}${font :size=12}${color4} RAM ${offset 8}${if_match $memperc >= 90}${color8}${else}${color6}${endif} $mem / $memmax
+${offset 120}${voffset 5}${font :size=12}${color4} CPU ${offset 11}${if_match ${cpu cpu0} >= 90}${color8}${else}${color6}${endif} ${cpu cpu0}%
