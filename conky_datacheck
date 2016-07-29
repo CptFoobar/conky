@@ -1,0 +1,56 @@
+# Custom conky, inspired by minconky, helix and flair weather.
+sbackground yes
+use_xft yes
+xftalpha 0.8
+update_interval 1
+total_run_times 0
+own_window yes
+own_window_type dock
+own_window_transparent yes
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+double_buffer yes
+draw_shades no
+draw_outline no
+draw_borders no
+draw_graph_borders no
+stippled_borders 0
+border_width 1
+default_color 000000
+default_shade_color 000000
+default_outline_color 000000
+minimum_size 100 100
+maximum_width 500
+gap_x 95
+gap_y 30
+no_buffers yes
+uppercase no
+cpu_avg_samples 2
+net_avg_samples 2
+short_units yes
+text_buffer_size 2048
+use_spacer none
+override_utf8_locale yes
+
+
+# Text settings #
+use_xft yes
+xftalpha 0
+xftfont TheNautiGal:bold:size=10
+override_utf8_locale yes
+
+# Color scheme #
+default_color white
+color2 f1f1f1#efefef
+color4 34ff41
+color6 ffff8a
+color8 d20f0f
+
+own_window_argb_value 0
+own_window_argb_visual yes
+own_window_colour 000000
+alignment top_left
+TEXT
+# --- Airtel WiFi Data --- #
+############################
+${execi 3600 curl -s -L "http://122.160.230.125:8080/planupdate/" -o ~/.cache/airtel.html}\
+${offset 120}${voffset 660}${font :size=12}${color4} WiFi ${offset 14}${if_match "${execi 3600 perl ~/.conky/wifi_check/airtel_datacheck.pl ~/.cache/airtel.html}" >= "5.00 GB"}${color8}${else}${color6}${endif}${execi 3600 perl ~/.conky/wifi_check/airtel_datacheck.pl ~/.cache/airtel.html} / 30 GB
